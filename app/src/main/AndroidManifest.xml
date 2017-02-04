@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.e0046644.adproteam6">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity"
+            android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".clerkactivity.ConfirmDeliveryActivity"
+            android:label="@string/title_activity_confirm_delievery">
+
+            </activity>
+        <activity android:name=".clerkactivity.DeliverOrder1Activity"
+            android:label="@string/title_activity_confirm_delievery">
+            </activity>
+        <activity android:name=".clerkactivity.ProcessRequest1Activity"
+            android:label="@string/title_activity_process_request1">
+
+            </activity>
+        <activity android:name=".clerkactivity.ProcessRequest2Activity"
+            android:label="@string/title_activity_process_request1">
+
+            </activity>
+        <activity android:name=".clerkactivity.ProcessRequest3Activity"
+            android:label="@string/title_activity_process_request1">
+
+            </activity>
+        <activity android:name=".clerkactivity.StoreClerkList" >
+
+            </activity>
+        <activity android:name=".clerkactivity.ReportDiscrepancy1Activity"
+            android:label="@string/title_activity_report_discrepancy">
+
+            </activity>
+        <activity android:name=".clerkactivity.ReportDiscrepancy2Activity"
+            android:label="@string/title_activity_report_discrepancy">
+
+            </activity>
+        <activity android:name=".clerkactivity.DeliverOrder2Activity"
+            android:label="@string/title_activity_confirm_delievery">
+
+            </activity>
+        <activity android:name=".deptheadactivity.ApproveRejectActivity"
+            android:label="@string/title_activity_approve_reject">
+
+            </activity>
+        <activity android:name=".deptheadactivity.AssignRepresentativeActivity"
+            android:label="@string/title_activity_assign_representative">
+
+            </activity>
+
+        <activity android:name=".deptheadactivity.DepartmentHeadList">
+
+           </activity>
+
+        <activity android:name=".deptrepactivity.SetCollectionPointActivityRP"
+            android:label="@string/title_activity_set_collection_point">
+
+            </activity>
+        <activity
+            android:name=".deptheadactivity.SetCollectionPointActivity"
+            android:label="@string/title_activity_set_collection_point">
+
+        </activity>
+    </application>
+
+</manifest>

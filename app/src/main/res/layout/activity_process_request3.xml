@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_confirm_request"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.e0046644.adproteam6.clerkactivity.ProcessRequest3Activity">
+
+    <TextView
+        android:text="@string/qtyneeded"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/qtyneeded" />
+
+    <TextView
+        android:text="@string/allocated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/allocated"
+        android:layout_alignBaseline="@+id/needed"
+        android:layout_alignBottom="@+id/needed"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="13dp"
+        android:layout_marginEnd="13dp" />
+
+    <TextView
+        android:text="@string/qtyreceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/qtyreceived"
+        android:layout_below="@+id/qtyneeded"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:text="@string/needed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/needed"
+        android:layout_below="@+id/qtyreceivednum"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="@string/dept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dept"
+        android:layout_below="@+id/qtyreceived"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:text="Approve"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/approverequest"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/allocated"
+        android:layout_alignEnd="@+id/allocated" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/allocated"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="11dp">
+
+        <ListView
+            android:layout_width="341dp"
+            android:layout_height="330dp"
+            android:id="@+id/list"
+
+            android:layout_above="@+id/approverequest"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+    </LinearLayout>
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/qtyreceivednum"
+        android:layout_below="@+id/qtyneedednum"
+        android:layout_toEndOf="@+id/qtyreceived"
+        android:layout_toRightOf="@+id/qtyreceived" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/qtyneedednum"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/qtyreceived"
+        android:layout_toEndOf="@+id/qtyreceived" />
+
+
+</RelativeLayout>

@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">LogicUStationery</string>
+
+    <string name="bin">Bin#</string>
+    <string name="title_activity_confirm_request">Confirm Request</string>
+    <string name="qtyneeded">Qty Needed: </string>
+    <string name="qtyreceived">Qty Onhand: </string>
+    <string name="needed">Needed: </string>
+    <string name="allocated">Allocated: </string>
+    <string name="dept">Department: </string>
+    <string name="title_activity_process_request1">ProcessRequest</string>
+    <string name="sayyes">OK</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_set_collection_point">SetCollectionPoint</string>
+    <string name="title_activity_confirm_delievery">ConfirmDelivery</string>
+    <string name="title_activity_report_discrepancy">ReportDiscrepancy</string>
+    <string name="title_activity_approve_reject">Approve/RejectRequest</string>
+    <string name="title_activity_assign_representative">AssignRepresentative</string>
+
+    <array name="DHoptions">
+        <item>UHC</item>
+        <item>UTown</item>
+        <item>Kent_Ridge</item>
+        <item>Biz</item>
+        <item>Deck</item>
+    </array>
+</resources>

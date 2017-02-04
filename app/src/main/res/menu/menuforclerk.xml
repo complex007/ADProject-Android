@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu tools:context=".clerkactivity.DeliverOrder1Activity" xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Confirm stock discrepancy" app:showAsAction="always" android:orderInCategory="101" android:id="@+id/item1"/>
+    <item android:title="Confirm order" app:showAsAction="always" android:orderInCategory="101" android:id="@+id/item2"/>
+    <item android:title="Process request" app:showAsAction="always" android:orderInCategory="101" android:id="@+id/item3"/>
+
+</menu>
