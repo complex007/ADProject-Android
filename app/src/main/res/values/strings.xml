@@ -24,4 +24,5 @@
         <item>Biz</item>
         <item>Deck</item>
     </array>
+    <string name="title_activity_logout">LogoutActivity</string>
 </resources>

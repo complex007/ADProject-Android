@@ -19,6 +19,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Disbursement;
 import com.example.e0046644.adproteam6.data.DisbursementItem;
@@ -33,100 +34,96 @@ public class ConfirmDeliveryActivity extends Activity {
     String colpoint;
     String token;
     String usercode;
+    String input;
+    SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmdelivery);
-        Log.i("enter","in");
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Log.i("enter", "in");
+         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
 
-        token=pref.getString("role","")+":"+pref.getString("token","");
-        usercode=pref.getString("usercode","");
-        items=(ListView)findViewById(R.id.list);
-        Log.i("listview",items.toString());
-
+        token = pref.getString("role", "") + ":" + pref.getString("token", "");
+        usercode = pref.getString("usercode", "");
+        items = (ListView) findViewById(R.id.list);
         deptcode = getIntent().getExtras().getString("Deptcode");
-        colpoint= getIntent().getExtras().getString("Collection");
-        String input=deptcode+","+colpoint;
-        new AsyncTask<String,Void,List<DisbursementItem>>(){
-        protected  List<DisbursementItem> doInBackground(String...params){
-          Log.i("getdisburses",params[0].toString());
-             List<DisbursementItem> ditems=DisbursementItem.FindAllById(params[0],token);
-            Log.i("getdisburses",String.valueOf(ditems.size()));
-            return ditems;
-        }
-            protected  void onPostExecute(List<DisbursementItem>itemList){
-            items.setAdapter(new SimpleAdapter(ConfirmDeliveryActivity.this,itemList,R.layout.activity_row_disbursementitem,
-                    new String[]{"Disbursementid","Itemcode","Allocatedquantity","Actualquantity","Supplier1","Supplier2","Supplier3"},
-                    new int[]{R.id.textView10,R.id.textView2,R.id.textView14,R.id.editText,R.id.radioButton4,R.id.radioButton5,R.id.radioButton6}));
+        colpoint = getIntent().getExtras().getString("Collection");input = deptcode + "," + colpoint;
 
+            refresh();
 
-
-        }
-    }.execute(input);
         Button b =(Button)findViewById(R.id.confirm);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-try
-{
-              List<DisbursementItem> results = getAllValues();
-                boolean result=true;
-                for(DisbursementItem i : results)
+                try
                 {
-                    int al=Integer.parseInt(i.get("Allocatedquantity"));
-                    int ac=Integer.parseInt(i.get("Actualquantity"));
-                    int minus=al-ac;
-
-                    if(minus<0)
+                  List<DisbursementItem> results = getAllValues();
+                    boolean result=true;
+                    for(DisbursementItem i : results)
                     {
+                        int al=Integer.parseInt(i.get("Allocatedquantity"));
+                        int ac=Integer.parseInt(i.get("Actualquantity"));
+                        int minus=al-ac;
 
-                        Toast d=Toast.makeText(ConfirmDeliveryActivity.this,"Incorrect Actualquantity",Toast.LENGTH_SHORT);
-                        d.show();
-                        result=false;
-                        break;
-                    }
-                    else if(minus>0)
-                    {
-                        int supplierid=((RadioGroup)findViewById(R.id.RadioGroup)).getCheckedRadioButtonId();
-                        String supplier=((RadioButton)findViewById(supplierid)).getText().toString();
-                        if(supplier.equals("N/A"))
+                        if(minus<0)
                         {
-                            Toast d=Toast.makeText(ConfirmDeliveryActivity.this,"Insufficient Suppplier Informantion",Toast.LENGTH_SHORT);
+
+                            Toast d=Toast.makeText(ConfirmDeliveryActivity.this,"Incorrect Actualquantity",Toast.LENGTH_SHORT);
                             d.show();
                             result=false;
                             break;
                         }
+                        else if(minus>0)
+                        {
+                            int supplierid=((RadioGroup)findViewById(R.id.RadioGroup)).getCheckedRadioButtonId();
+                            String supplier=((RadioButton)findViewById(supplierid)).getText().toString();
+                            if(supplier.equals("N/A"))
+                            {
+                                Toast d=Toast.makeText(ConfirmDeliveryActivity.this,"Insufficient Suppplier Informantion",Toast.LENGTH_SHORT);
+                                d.show();
+                                result=false;
+                                break;
+                            }
+                        }
                     }
-                }
-                if(result)
+                    if(result)
+                    {
+                        new AsyncTask<List<DisbursementItem>, Void, Void>(){
+                            @Override
+                            protected Void doInBackground(List<DisbursementItem>... params) {
+                                Log.i("ditem result",params[0].toArray().toString());
+                                DisbursementItem.updateDisbursementInformation(params[0],token);
+                                return null;
+                            }
+                            protected  void  onPostExecute(Void result){
+                                finish();
+
+                            }
+                        }.execute(results);
+                    }
+                    }
+                catch( Exception ex)
                 {
-                    new AsyncTask<List<DisbursementItem>, Void, Void>(){
-                        @Override
-                        protected Void doInBackground(List<DisbursementItem>... params) {
-                            Log.i("ditem result",params[0].toArray().toString());
-                            DisbursementItem.updateDisbursementInformation(params[0],token);
-                            return null;
-                        }
-                        protected  void  onPostExecute(Void result){
-                            finish();
 
-                        }
-                    }.execute(results);
+                    Toast d=Toast.makeText(ConfirmDeliveryActivity.this,"Incorrect Actualquantity",Toast.LENGTH_SHORT);
+                    d.show();
+                    refresh();
                 }
-}
-catch( Exception ex)
-{
-
-    Toast d=Toast.makeText(ConfirmDeliveryActivity.this,"Incorrect Actualquantity",Toast.LENGTH_SHORT);
-    d.show();
-}
-
-
             }
         });
 
+        }
+        else
+        {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+        }
 
     }
 
@@ -260,8 +257,43 @@ catch( Exception ex)
                     }
                 }.execute();
                 return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void refresh()
+    {
+        try
+        {
+
+
+        new AsyncTask<String, Void, List<DisbursementItem>>() {
+            protected List<DisbursementItem> doInBackground(String... params) {
+                Log.i("getdisburses", params[0].toString());
+                List<DisbursementItem> ditems = DisbursementItem.FindAllById(params[0], token);
+                Log.i("getdisburses", String.valueOf(ditems.size()));
+                return ditems;
+            }
+
+            protected void onPostExecute(List<DisbursementItem> itemList) {
+                items.setAdapter(new SimpleAdapter(ConfirmDeliveryActivity.this, itemList, R.layout.activity_row_disbursementitem,
+                        new String[]{"Disbursementid", "Itemcode", "Allocatedquantity", "Actualquantity", "Supplier1", "Supplier2", "Supplier3"},
+                        new int[]{R.id.textView10, R.id.textView2, R.id.textView14, R.id.editText, R.id.radioButton4, R.id.radioButton5, R.id.radioButton6}));
+            }
+        }.execute(input);
+        }
+        catch (Exception ex)
+        {
+            finish();
         }
     }
 }

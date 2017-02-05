@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Disbursement;
 import com.example.e0046644.adproteam6.data.RequestDept;
@@ -23,17 +24,27 @@ import java.util.List;
 public class DeliverOrder1Activity extends ListActivity {
 
      String token;
+    SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
+
+
         token=pref.getString("role","")+":"+pref.getString("token","");
-        try{
+
           refresh();
+
         }
-        catch(Exception ex)
+        else
         {
-            refresh();
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
         }
     }
 
@@ -152,6 +163,14 @@ public class DeliverOrder1Activity extends ListActivity {
                     }
                 }.execute();
                 return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -159,25 +178,30 @@ public class DeliverOrder1Activity extends ListActivity {
 
     public void refresh()
     {
-        new AsyncTask<Void, Void, List<String>>() {
-            protected List<String> doInBackground(Void... params) {
-                List<String> result = Disbursement.listallcollectionpoint(token);
-                return result;
-            }
-
-            protected void onPostExecute(List<String> result) {
-                if (result.size()==0)
-                {
-
-                    finish();
-                }
-                else
-                {
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_listcollectionpoint, R.id.textView11, result);
-                    setListAdapter(adapter);
+        try {
+            new AsyncTask<Void, Void, List<String>>() {
+                protected List<String> doInBackground(Void... params) {
+                    List<String> result = Disbursement.listallcollectionpoint(token);
+                    return result;
                 }
 
+                protected void onPostExecute(List<String> result) {
+                    if (result.size() == 0) {
+
+                        finish();
+                    } else {
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.activity_listcollectionpoint, R.id.textView11, result);
+                        setListAdapter(adapter);
+                    }
+
+                }
+            }.execute();
+        }
+            catch(Exception ex)
+            {
+                finish();
             }
-        }.execute();
     }
-}
+    }
+
+

@@ -19,6 +19,9 @@
         android:title="Assign Representative"
         />
 
-
+    <item
+        android:id="@+id/LogOut"
+        android:title="Log Out"
+        />
 
 </menu>

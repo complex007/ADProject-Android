@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.RequisitionItem;
 
@@ -35,18 +36,27 @@ public class ApproveRejectActivity extends Activity {
     ListView items;
     String token;
     String headcode;
+    SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.approve_reject);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
+        pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1=pref.getString("role","");
+        String token1=pref.getString("token","");
+        if(token1!=null&&!token1.equals("")&&role1.equals("departmenthead")){
         token=pref.getString("role","")+":"+pref.getString("token","");
         headcode=pref.getString("usercode","");
         items = (ListView) findViewById(R.id.list);
-
-        refresh();
+            try
+            {
+                refresh();
+            }
+            catch(Exception ex)
+            {
+                finish();
+            }
 
         Button reject = (Button) findViewById(R.id.button2);
         reject.setOnClickListener(new View.OnClickListener() {
@@ -149,8 +159,17 @@ try {
 
 
 
+        }
+        else
+        {
 
-
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+            Intent i = new Intent(this,MainActivity.class);
+            startActivity(i);
+        }
 
 
     }
@@ -207,6 +226,14 @@ try {
                 finish();
                 Intent intent2 = new Intent(this, SetCollectionPointActivity.class);
                 this.startActivity(intent2);
+                return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
                 return true;
 
 

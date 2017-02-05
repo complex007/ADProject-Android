@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Disbursement;
 import com.example.e0046644.adproteam6.data.Item;
@@ -30,27 +31,28 @@ public class ProcessRequest2Activity extends ListActivity {
     String[] result;
     String[] resultowe;
     String[] resultnew;
+    SharedPreferences pref;
     Item item;
     Intent i;
     List<RequestDept> requestdeptresult;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        token=pref.getString("role","")+":"+pref.getString("token","");
+         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        token = pref.getString("role", "") + ":" + pref.getString("token", "");
         request = getIntent().getExtras().getString("request");
-        resultitem=  getIntent().getExtras().getStringArray("requestitem");
-        Log.i("items",resultitem.toString());
+        resultitem = getIntent().getExtras().getStringArray("requestitem");
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
         try {
-            Log.i("r1","here");
+
             refresh(resultitem);
 
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
 
-            switch(request){
-                case  "new":
+            switch (request) {
+                case "new":
 
                     refreshnew();
                     break;
@@ -61,7 +63,14 @@ public class ProcessRequest2Activity extends ListActivity {
                     break;
             }
         }
-
+    }
+        else
+        {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+        }
     }
 
     protected void onListItemClick(ListView l, View v, int position , long id)
@@ -209,13 +218,21 @@ public class ProcessRequest2Activity extends ListActivity {
                     }
                 }.execute();
                 return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
     public void refresh(String[] initem )
     {
-        Log.i("refresh out",initem.toString());
+
         new AsyncTask<String[], Void, List<Item>>() {
             @Override
             protected List<Item> doInBackground(String[]... params) {
@@ -244,10 +261,12 @@ public class ProcessRequest2Activity extends ListActivity {
                 }
             }
         }.execute(initem);
+
+
     }
     public void refreshnew()
     {
-
+try{
         new AsyncTask<Void, Void, List<Item>>() {
 
             protected List<Item> doInBackground(Void... params) {
@@ -286,10 +305,15 @@ public class ProcessRequest2Activity extends ListActivity {
             }
 
         }.execute();
+}
+catch(Exception ex)
+{
+    finish();
+}
     }
     public void refreshowe()
     {
-
+try{
         new AsyncTask<Void, Void, List<Item>>() {
 
             protected List<Item> doInBackground(Void... params) {
@@ -328,7 +352,11 @@ public class ProcessRequest2Activity extends ListActivity {
             }
 
         }.execute();
-
+}
+catch(Exception ex)
+{
+    finish();
+}
     }
 
 }

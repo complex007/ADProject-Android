@@ -17,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.AdjustmentItem;
 import com.example.e0046644.adproteam6.data.Disbursement;
@@ -31,13 +32,17 @@ public class ReportDiscrepancy1Activity extends Activity {
 
     List<AdjustmentItem> alist = new ArrayList<AdjustmentItem>();
     String token;
+    SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report_dis);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+         pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
         token=pref.getString("role","")+":"+pref.getString("token","");
-        //EditText suppliercode = (EditText) findViewById(R.id.editText1);
+
        final TextView v3 = (TextView) findViewById(R.id.textView10);
         Button seacrch = (Button) findViewById(R.id.button);
         seacrch.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +170,14 @@ public class ReportDiscrepancy1Activity extends Activity {
             }
         });
     }
+    else
+    {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+        finish();
+    }
+    }
     @Override
     protected void onActivityResult(int requestCode,int resultCode,Intent data)
     {
@@ -266,6 +279,14 @@ public class ReportDiscrepancy1Activity extends Activity {
                         }
                     }
                 }.execute();
+                return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Disbursement;
 import com.example.e0046644.adproteam6.data.RequestDept;
@@ -22,20 +23,27 @@ import java.util.List;
 
 public class DeliverOrder2Activity extends ListActivity {
      String colpoint;
-
+    SharedPreferences pref;
     String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+         pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
          token=pref.getString("role","")+":"+pref.getString("token","");
         colpoint = getIntent().getExtras().getString("colpoint");
-       try{
-           refresh();
-       }catch(Exception ex)
-       {
-           refresh();
-       }
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
+            refresh();
+        }
+
+    else
+    {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+        finish();
+    }
 
     }
     public boolean onCreateOptionsMenu(Menu menu){
@@ -155,6 +163,14 @@ try {
                     }
                 }.execute();
                 return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -162,39 +178,40 @@ try {
 
     public void refresh()
     {
-        new AsyncTask<String,Void,List<Disbursement>>(){
-            protected List<Disbursement>doInBackground(String...params){
-                List<Disbursement> ditem=Disbursement.ListAllByColloctionpoint(params[0],token);
-                return ditem;
-            }
-            protected  void onPostExecute(List<Disbursement> disbursementList){
-                if(disbursementList.size()==0)
-                {
-                    finish();
+        try {
+            new AsyncTask<String, Void, List<Disbursement>>() {
+                protected List<Disbursement> doInBackground(String... params) {
+                    List<Disbursement> ditem = Disbursement.ListAllByColloctionpoint(params[0], token);
+                    return ditem;
                 }
-                else
-                {
-                    List<Disbursement> uniqitem= new ArrayList<Disbursement>();
-                    uniqitem.add(disbursementList.get(0));
-                    for(Disbursement i:disbursementList)
-                    {
-                        String dept1=i.get("Deptcode");
-                        for (Disbursement j : uniqitem)
-                        {
-                            String dept2=j.get("Deptcode");
-                            if(!dept1.equals(dept2))
-                            {
-                                uniqitem.add(i);
+
+                protected void onPostExecute(List<Disbursement> disbursementList) {
+                    if (disbursementList.size() == 0) {
+                        finish();
+                    } else {
+                        List<Disbursement> uniqitem = new ArrayList<Disbursement>();
+                        uniqitem.add(disbursementList.get(0));
+                        for (Disbursement i : disbursementList) {
+                            String dept1 = i.get("Deptcode");
+                            for (Disbursement j : uniqitem) {
+                                String dept2 = j.get("Deptcode");
+                                if (!dept1.equals(dept2)) {
+                                    uniqitem.add(i);
+                                }
                             }
                         }
+                        setListAdapter(new SimpleAdapter(getApplicationContext()
+                                , uniqitem, R.layout.activity_row_disbursement, new String[]{"Deptcode", "Representativecode", "Disbursementid"}, new int[]{R.id.textView, R.id.textView9}));
                     }
-                    setListAdapter(new SimpleAdapter(getApplicationContext()
-                            ,uniqitem, R.layout.activity_row_disbursement,new String[]{"Deptcode","Representativecode","Disbursementid"},new int[]{R.id.textView,R.id.textView9}));
                 }
-            }
 
 
-        }.execute(colpoint);
+            }.execute(colpoint);
+        }
+        catch(Exception ex)
+        {
+            finish();
+        }
     }
 
 }

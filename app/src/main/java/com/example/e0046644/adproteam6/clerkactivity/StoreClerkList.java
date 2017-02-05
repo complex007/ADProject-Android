@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Disbursement;
 import com.example.e0046644.adproteam6.data.RequestDept;
@@ -26,27 +27,37 @@ import java.util.List;
 
 public class StoreClerkList extends Activity implements AdapterView.OnItemClickListener {
     String[] result;
-//    SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//    final String token=pref.getString("role","")+":"+pref.getString("token","");
+    SharedPreferences pref;
      String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        token=pref.getString("role","")+":"+pref.getString("token","");
-        Log.i("token",token);
-        setContentView(R.layout.storeclerklist);
-        String[] values = {"Report stock discrepancy", "Confirm order", "Process request"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.scrow, R.id.textView1, values);
-        ListView list = (ListView) findViewById(R.id.listView1);
-        list.setAdapter(adapter);
-        list.setOnItemClickListener(this);
+         pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1=pref.getString("role","");
+        String token1=pref.getString("token","");
+        if(token1!=null&&!token1.equals("")&&role1.equals("storeclerk")) {
+            token = pref.getString("role", "") + ":" + pref.getString("token", "");
+            Log.i("token", token);
+            setContentView(R.layout.storeclerklist);
+            String[] values = {"Report Stock Discrepancy", "Confirm Order", "Process Request","Log Out"};
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                    R.layout.scrow, R.id.textView1, values);
+            ListView list = (ListView) findViewById(R.id.listView1);
+            list.setAdapter(adapter);
+            list.setOnItemClickListener(this);
+        }
+        else
+        {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String item = (String) parent.getAdapter().getItem(position);
+
         if(position == 0) {
             Intent intent = new Intent(StoreClerkList.this,ReportDiscrepancy1Activity.class);
             this.startActivity(intent);
@@ -129,9 +140,21 @@ public class StoreClerkList extends Activity implements AdapterView.OnItemClickL
                     }
                 }
             }.execute();
-
-
-
         }
+        else
+        {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+        }
+    }
+
+    @Override
+    public void finish()
+    {
+        Intent i = new Intent(this,MainActivity.class);
+        startActivity(i);
+        super.finish();
     }
 }

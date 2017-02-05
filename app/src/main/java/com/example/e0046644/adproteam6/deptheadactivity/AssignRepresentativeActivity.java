@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Employee;
 import com.example.e0046644.adproteam6.data.RequisitionItem;
@@ -37,19 +38,29 @@ public class AssignRepresentativeActivity extends Activity{
     ListView items;
     TextView currep;
     Spinner spinner;
+    SharedPreferences pref;
 String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.assign_representative);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+         pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1=pref.getString("role","");
+        String token1=pref.getString("token","");
+        if(token1!=null&&!token1.equals("")&&role1.equals("departmenthead")){
+            token = pref.getString("role", "") + ":" + pref.getString("token", "");
+            headcode = pref.getString("usercode", "");
+            currep = (TextView) findViewById(R.id.CurrentRepresentative);
+            spinner = (Spinner) findViewById(R.id.spinner2);
 
-        token=pref.getString("role","")+":"+pref.getString("token","");
-        headcode=pref.getString("usercode","");
-         currep = (TextView) findViewById(R.id.CurrentRepresentative);
-          spinner = (Spinner) findViewById(R.id.spinner2);
+            try
+            {
+                refresh();
+            }catch(Exception ex)
+            {
+                finish();
+            }
 
-         refresh();
 
         Button b = (Button) findViewById(R.id.button3);
         b.setOnClickListener(new View.OnClickListener() {
@@ -106,7 +117,17 @@ String token;
 
             });
 
+        }
+        else
+        {
 
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+            Intent i = new Intent(this,MainActivity.class);
+            startActivity(i);
+        }
         }
 
 
@@ -161,6 +182,14 @@ String token;
                 finish();
                 Intent intent2 = new Intent(this, SetCollectionPointActivity.class);
                 this.startActivity(intent2);
+                return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
                 return true;
 
 

@@ -18,7 +18,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
+import com.example.e0046644.adproteam6.clerkactivity.DeliverOrder2Activity;
 import com.example.e0046644.adproteam6.data.Department;
 import com.example.e0046644.adproteam6.data.RequisitionItem;
 
@@ -34,18 +36,28 @@ public class SetCollectionPointActivity extends Activity {
     private List<RequisitionItem> reqlist = new ArrayList<RequisitionItem>();
     TextView collpt;
     ListView items;
+    SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_collection_point);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1=pref.getString("role","");
+        String token1=pref.getString("token","");
+        if(token1!=null&&!token1.equals("")&&role1.equals("departmenthead")){
+            token = pref.getString("role", "") + ":" + pref.getString("token", "");
+            headcode = pref.getString("usercode", "");
 
-        token=pref.getString("role","")+":"+pref.getString("token","");
-        headcode=pref.getString("usercode","");
-
-        spinner = (Spinner) findViewById(R.id.spinner2);
-         collpt = (TextView) findViewById(R.id.textView4);
-         refresh();
+            spinner = (Spinner) findViewById(R.id.spinner2);
+            collpt = (TextView) findViewById(R.id.textView4);
+            try
+            {
+                refresh();
+            }
+            catch(Exception ex)
+            {
+                finish();
+            }
 
         Button b = (Button) findViewById(R.id.button3);
         b.setOnClickListener(new View.OnClickListener(){
@@ -91,6 +103,17 @@ public class SetCollectionPointActivity extends Activity {
 
 
         });
+        }
+        else
+        {
+
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+            Intent i = new Intent(this,MainActivity.class);
+            startActivity(i);
+        }
 
     }
 
@@ -144,7 +167,14 @@ public class SetCollectionPointActivity extends Activity {
                 this.startActivity(intent2);
                 return true;
 
-
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 

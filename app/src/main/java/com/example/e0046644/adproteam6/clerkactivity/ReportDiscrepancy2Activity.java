@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.AdjustmentItem;
 import com.example.e0046644.adproteam6.data.Disbursement;
@@ -32,11 +33,16 @@ import java.util.List;
 public class ReportDiscrepancy2Activity extends Activity implements Serializable {
 
      String token;
+    SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.list_discrepancy);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+         pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
+
         token=pref.getString("role","")+":"+pref.getString("token","");
         Bundle extras= getIntent().getExtras( );
         final List<HashMap<String, String>> adjustmentItems =
@@ -89,6 +95,14 @@ public class ReportDiscrepancy2Activity extends Activity implements Serializable
 
 
 
+        }
+        else
+        {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+        }
 
 
     }
@@ -189,6 +203,14 @@ public class ReportDiscrepancy2Activity extends Activity implements Serializable
                         }
                     }
                 }.execute();
+                return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

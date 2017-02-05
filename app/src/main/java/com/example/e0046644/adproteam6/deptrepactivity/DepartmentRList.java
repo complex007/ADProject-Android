@@ -1,4 +1,4 @@
-package com.example.e0046644.adproteam6.deptheadactivity;
+package com.example.e0046644.adproteam6.deptrepactivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,8 +12,11 @@ import android.widget.ListView;
 
 import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
+import com.example.e0046644.adproteam6.deptheadactivity.ApproveRejectActivity;
+import com.example.e0046644.adproteam6.deptheadactivity.AssignRepresentativeActivity;
+import com.example.e0046644.adproteam6.deptheadactivity.SetCollectionPointActivity;
 
-public class DepartmentHeadList extends Activity implements AdapterView.OnItemClickListener {
+public class DepartmentRList extends Activity implements AdapterView.OnItemClickListener {
 String token;
     SharedPreferences pref;
     @Override
@@ -23,9 +26,9 @@ String token;
          pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String role1=pref.getString("role","");
         String token1=pref.getString("token","");
-        if(token1!=null&&!token1.equals("")&&role1.equals("departmenthead")){
+        if(token1!=null&&!token1.equals("")&&role1.equals("departmentrepresentative")){
             token = pref.getString("role", "") + ":" + pref.getString("token", "");
-            String[] values = {"Approve/Reject Request", "Assign Representative", "Set Collection Point","Log Out"};
+            String[] values = { "Set Collection Point","Log Out"};
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                     R.layout.dhrow, R.id.textView1, values);
             ListView list = (ListView) findViewById(R.id.listView1);
@@ -52,14 +55,7 @@ String token;
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if(position == 0) {
-            Intent intent = new Intent(this, ApproveRejectActivity.class);
-            this.startActivity(intent);
-        } else if (position == 1) {
-            Intent intent2 = new Intent(this, AssignRepresentativeActivity.class);
-            this.startActivity(intent2);
-
-        } else if (position == 2) {
-            Intent intent1 = new Intent(this, SetCollectionPointActivity.class);
+            Intent intent1 = new Intent(this, SetCollectionPointActivityRP.class);
             this.startActivity(intent1);
         }
         else

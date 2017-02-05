@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Disbursement;
 import com.example.e0046644.adproteam6.data.RequestDept;
@@ -23,19 +24,21 @@ import java.util.List;
 
 public class ProcessRequest1Activity extends Activity {
     String[] result;
-
+    SharedPreferences pref;
     String token;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_request1);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
          token=pref.getString("role","")+":"+pref.getString("token","");
 
         Button btnowe=(Button)findViewById(R.id.btnowe);
         Button btnnew=(Button)findViewById(R.id.btnnew);
 
-
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
         btnowe.setOnClickListener(new View.OnClickListener() {
 
 
@@ -55,7 +58,14 @@ public class ProcessRequest1Activity extends Activity {
                                       }
                                   }
         );
-
+    }
+    else
+    {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+        finish();
+    }
         }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -151,6 +161,14 @@ public class ProcessRequest1Activity extends Activity {
                     }
                 }.execute();
                 return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -158,54 +176,60 @@ public class ProcessRequest1Activity extends Activity {
 
 public void refreshnew()
 {
-    new AsyncTask<Void, Void, String[]>() {
-        protected String[] doInBackground(Void... params) {
-            String[] result1 = RequestDept.getuniqueitems(token);
-            List<String>  resultwrap=new ArrayList<String>();
-            for(int i=0;i<result1.length;i++)
-            {
-                List<RequestDept>  requestdeptresult= RequestDept.getrequestdeptstatus(result1[i],token);
-                if(!requestdeptresult.isEmpty())
-                {
-                    resultwrap.add(result1[i]);
+    try {
+        new AsyncTask<Void, Void, String[]>() {
+            protected String[] doInBackground(Void... params) {
+                String[] result1 = RequestDept.getuniqueitems(token);
+                List<String> resultwrap = new ArrayList<String>();
+                for (int i = 0; i < result1.length; i++) {
+                    List<RequestDept> requestdeptresult = RequestDept.getrequestdeptstatus(result1[i], token);
+                    if (!requestdeptresult.isEmpty()) {
+                        resultwrap.add(result1[i]);
+                    }
+
+                }
+                String[] je = new String[resultwrap.size()];
+                for (int j = 0; j < resultwrap.size(); j++) {
+                    je[j] = resultwrap.get(j);
+                }
+                result = je;
+                return result;
+            }
+
+            protected void onPostExecute(String[] result) {
+                if (result == null || result.length == 0) {
+
+                    new AlertDialog.Builder(ProcessRequest1Activity.this)
+                            .setTitle("Sorry")
+                            .setMessage("No New Request now.")
+                            .setCancelable(false)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                } else {
+
+                    Intent in = new Intent(ProcessRequest1Activity.this, ProcessRequest2Activity.class);
+                    in.putExtra("request", "new");
+                    in.putExtra("requestitem", result);
+                    startActivity(in);
                 }
 
             }
-            String [] je=new String[resultwrap.size()];
-            for(int j=0;j<resultwrap.size();j++)
-            {
-                je[j]=resultwrap.get(j);
-            }
-            result=je;
-            return result;
-        }
+        }.execute();
+    }
+    catch(Exception ex)
+    {
+        finish();
+    }
 
-        protected void onPostExecute(String[] result) {
-            if (result==null||result.length==0) {
 
-                new AlertDialog.Builder(ProcessRequest1Activity.this)
-                        .setTitle("Sorry")
-                        .setMessage("No New Request now.")
-                        .setCancelable(false)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
-            } else {
-
-                Intent in=new Intent(ProcessRequest1Activity.this,ProcessRequest2Activity.class);
-                in.putExtra("request","new");
-                in.putExtra("requestitem",result);
-                startActivity(in);
-            }
-
-        }
-    }.execute();
 }
     public void refreshowe()
     {
+        try{
         new AsyncTask<Void, Void, String[]>() {
             protected String[] doInBackground(Void... params) {
                 String[] result1 = RequestDept.getuniqueitems2(token);
@@ -251,6 +275,11 @@ public void refreshnew()
 
             }
         }.execute();
+        }
+        catch(Exception ex)
+        {
+            finish();
+        }
     }
 
     }

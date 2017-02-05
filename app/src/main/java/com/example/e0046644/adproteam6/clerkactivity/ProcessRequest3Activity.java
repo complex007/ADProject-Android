@@ -17,6 +17,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.e0046644.adproteam6.MainActivity;
 import com.example.e0046644.adproteam6.R;
 import com.example.e0046644.adproteam6.data.Disbursement;
 import com.example.e0046644.adproteam6.data.RequestDept;
@@ -32,94 +33,35 @@ public class ProcessRequest3Activity extends Activity  {
     ListView items;
    String token;
     int  sumneeded;
-
+    TextView qtyonhand;
+    TextView totalneeded;
+    SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process_request3);
-        SharedPreferences pref= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        token=pref.getString("role","")+":"+pref.getString("token","");
-        final TextView totalneeded=(TextView ) findViewById(R.id.qtyneedednum);
-        final TextView  qtyonhand=(TextView ) findViewById(R.id.qtyreceivednum);
-         items=(ListView)findViewById(R.id.list);
+         pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String role1 = pref.getString("role", "");
+        String token1 = pref.getString("token", "");
+        if (token1 != null && !token1.equals("") && role1.equals("storeclerk")) {
+            token = pref.getString("role", "") + ":" + pref.getString("token", "");
+             totalneeded = (TextView) findViewById(R.id.qtyneedednum);
+             qtyonhand = (TextView) findViewById(R.id.qtyreceivednum);
+            item = getIntent().getExtras().getString("item");
+            Log.i("item", item);
+            request = getIntent().getExtras().getString("request");
 
-        item=getIntent().getExtras().getString("item");
-        Log.i("item",item);
-        request=getIntent().getExtras().getString("request");
-        Log.i("itemcode",item);
+            refresh();
 
-        switch (request)
-        {
-            case "owe":
-                new AsyncTask<String,Void,List<RequestDept>>(){
-                    protected List<RequestDept> doInBackground(String...params){
-                        Log.i("rede",params[0]);
-                        requestdeptresult= RequestDept.getrequestdeptstatus2(params[0],token);
-                        Log.i("result",String.valueOf(requestdeptresult.size()));
-                        return requestdeptresult;
-                    }
-                    protected  void onPostExecute(List<RequestDept> result){
-                        if(result.size()!=0)
-                        {
-
-                            items.setAdapter(new SimpleAdapter(ProcessRequest3Activity.this,result,R.layout.activity_row_process_request3,
-                                    new String[]{"Deptname","Deptneededquantity","Allocatedquantity"},new int[]{R.id.dept,R.id.needed,R.id.allocate}));
-                            int sumneeded=0;
-                            for(RequestDept i : result)
-                            {
-                                sumneeded+=Integer.parseInt(i.get("Deptneededquantity"));
-                            }
-                            totalneeded.setText(String.valueOf(sumneeded));
-                            String sumhand=result.get(0).get("Quantityonhand");
-                            qtyonhand.setText(sumhand);
-                        }
-                       else
-                        {
-
-                            Toast d=Toast.makeText(ProcessRequest3Activity.this,"No Enough Stock",Toast.LENGTH_SHORT);
-                            d.show();
-
-                        }
-                    }
-
-                }.execute(item);
-                break;
-            case "new":
-                new AsyncTask<String,Void,List<RequestDept>>(){
-                    protected List<RequestDept> doInBackground(String...params){
-                        requestdeptresult= RequestDept.getrequestdeptstatus(params[0],token);
-                        Log.i("result",String.valueOf(requestdeptresult.size()));
-                        return requestdeptresult;
-                    }
-                    protected  void onPostExecute(List<RequestDept> result){
-                        items.setAdapter(new SimpleAdapter(ProcessRequest3Activity.this,result,R.layout.activity_row_process_request3,
-                                new String[]{"Deptname","Deptneededquantity","Allocatedquantity"},new int[]{R.id.dept,R.id.needed,R.id.allocate}));
-                         sumneeded=0;
-                        for(RequestDept i : result)
-                        {
-                            sumneeded+=Integer.parseInt(i.get("Deptneededquantity"));
-                        }
-                        totalneeded.setText(String.valueOf(sumneeded));
-                        String sumhand=result.get(result.size()-1).get("Quantityonhand");
-                        qtyonhand.setText(sumhand);
-                    }
-                }.execute(item);
-                break;
-            default:
-                break;
-
-
-        }
-
-        Button b =(Button)findViewById(R.id.approverequest);
+        Button b = (Button) findViewById(R.id.approverequest);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<RequestDeptItem> results = getAllValues();
-                boolean result=true;
-                int sumal=0;
-                int quantityonhand=0;
-                int sneed=Integer.parseInt(totalneeded.getText().toString());
+                boolean result = true;
+                int sumal = 0;
+                int quantityonhand = 0;
+                int sneed = Integer.parseInt(totalneeded.getText().toString());
                 try {
 
 
@@ -167,16 +109,28 @@ public class ProcessRequest3Activity extends Activity  {
                         Toast d = Toast.makeText(ProcessRequest3Activity.this, "Incorrect Allocated", Toast.LENGTH_SHORT);
                         d.show();
                     }
-                }
-                catch(Exception  ex)
-                {
+                } catch (Exception ex) {
+
                     Toast d = Toast.makeText(ProcessRequest3Activity.this, "Incorrect Allocated", Toast.LENGTH_SHORT);
                     d.show();
+                    refresh();
                 }
 
             }
         });
+        }
+        else
+        {
+            SharedPreferences.Editor editor = pref.edit();
+            editor.clear();
+            editor.commit();
+            finish();
+        }
     }
+
+
+
+
     public List<RequestDeptItem> getAllValues() {
         View parentView = null;
         List<RequestDeptItem> results=new ArrayList<RequestDeptItem>();
@@ -298,8 +252,77 @@ public class ProcessRequest3Activity extends Activity  {
                     }
                 }.execute();
                 return true;
+            case R.id.LogOut:
+                SharedPreferences.Editor editor = pref.edit();
+                editor.clear();
+                editor.commit();
+                Intent i = new Intent(this,MainActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    public void refresh()
+    {
+        switch (request) {
+            case "owe":
+                new AsyncTask<String, Void, List<RequestDept>>() {
+                    protected List<RequestDept> doInBackground(String... params) {
+                        Log.i("rede", params[0]);
+                        requestdeptresult = RequestDept.getrequestdeptstatus2(params[0], token);
+                        Log.i("result", String.valueOf(requestdeptresult.size()));
+                        return requestdeptresult;
+                    }
+
+                    protected void onPostExecute(List<RequestDept> result) {
+                        if (result.size() != 0) {
+
+                            items.setAdapter(new SimpleAdapter(ProcessRequest3Activity.this, result, R.layout.activity_row_process_request3,
+                                    new String[]{"Deptname", "Deptneededquantity", "Allocatedquantity"}, new int[]{R.id.dept, R.id.needed, R.id.allocate}));
+                            int sumneeded = 0;
+                            for (RequestDept i : result) {
+                                sumneeded += Integer.parseInt(i.get("Deptneededquantity"));
+                            }
+                            totalneeded.setText(String.valueOf(sumneeded));
+                            String sumhand = result.get(0).get("Quantityonhand");
+                            qtyonhand.setText(sumhand);
+                        } else {
+
+                            Toast d = Toast.makeText(ProcessRequest3Activity.this, "No Enough Stock", Toast.LENGTH_SHORT);
+                            d.show();
+
+                        }
+                    }
+
+                }.execute(item);
+                break;
+            case "new":
+                new AsyncTask<String, Void, List<RequestDept>>() {
+                    protected List<RequestDept> doInBackground(String... params) {
+                        requestdeptresult = RequestDept.getrequestdeptstatus(params[0], token);
+                        Log.i("result", String.valueOf(requestdeptresult.size()));
+                        return requestdeptresult;
+                    }
+
+                    protected void onPostExecute(List<RequestDept> result) {
+                        items.setAdapter(new SimpleAdapter(ProcessRequest3Activity.this, result, R.layout.activity_row_process_request3,
+                                new String[]{"Deptname", "Deptneededquantity", "Allocatedquantity"}, new int[]{R.id.dept, R.id.needed, R.id.allocate}));
+                        sumneeded = 0;
+                        for (RequestDept i : result) {
+                            sumneeded += Integer.parseInt(i.get("Deptneededquantity"));
+                        }
+                        totalneeded.setText(String.valueOf(sumneeded));
+                        String sumhand = result.get(result.size() - 1).get("Quantityonhand");
+                        qtyonhand.setText(sumhand);
+                    }
+                }.execute(item);
+                break;
+            default:
+                break;
         }
     }
 }
