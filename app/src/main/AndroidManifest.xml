@@ -57,9 +57,7 @@
         <activity
             android:name=".deptheadactivity.SetCollectionPointActivity"
             android:label="@string/title_activity_set_collection_point"></activity>
-        <activity
-            android:name=".LogoutActivity"
-            android:label="@string/title_activity_logout"></activity>
+       <activity android:name=".deptrepactivity.DepartmentRList"/>
     </application>
 
 </manifest>

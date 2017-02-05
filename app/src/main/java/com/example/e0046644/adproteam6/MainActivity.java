@@ -18,6 +18,7 @@ import com.example.e0046644.adproteam6.clerkactivity.ProcessRequest1Activity;
 import com.example.e0046644.adproteam6.clerkactivity.StoreClerkList;
 import com.example.e0046644.adproteam6.data.Login;
 import com.example.e0046644.adproteam6.deptheadactivity.DepartmentHeadList;
+import com.example.e0046644.adproteam6.deptrepactivity.DepartmentRList;
 import com.example.e0046644.adproteam6.deptrepactivity.SetCollectionPointActivityRP;
 
 import java.util.Arrays;
@@ -55,7 +56,7 @@ public class MainActivity extends Activity {
                     break;
                 case  "departmentrepresentative" :
                     finish("this");
-                    Intent i3 = new Intent(getApplicationContext(),SetCollectionPointActivityRP.class);
+                    Intent i3 =  new Intent(getApplicationContext(),DepartmentRList.class);
                     startActivity(i3);
                     break;
                 default:
@@ -128,7 +129,7 @@ public class MainActivity extends Activity {
                                                                  break;
 
                                                              case  "departmentrepresentative" :
-                                                                 Intent i3 = new Intent(getApplicationContext(),SetCollectionPointActivityRP.class);
+                                                                 Intent i3 = new Intent(getApplicationContext(),DepartmentRList.class);
                                                                  startActivity(i3);
                                                                  break;
                                                              default:
